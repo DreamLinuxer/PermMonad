@@ -51,7 +51,20 @@ coF₁≡ : {τ : U} {p : τ ⟷ τ} {A B : Category.Obj (p!p⇒C p)} (k : ℕ)
       → ap (compose k p) B ≣ A
       → ap (compose k p) (ap (! p) B) ≣ ap (! p) A
 coF₁≡ {τ} {p} {A} {B} ℕ.zero eq    = ≣-cong (ap (! p)) eq
-coF₁≡ {τ} {p} {A} {B} (ℕ.suc k) eq = {!!}
+coF₁≡ {τ} {p} {A} {B} (ℕ.suc k) eq =
+      ap (compose k p) (ap p (ap (! p) B))
+   ≡⟨ ≣-cong (ap (compose k p)) (ap≡ {p = p} P.refl) ⟩
+      ap (compose k p) B
+   ≡⟨ ≣-sym (ap!≡ {p = p} P.refl) ⟩
+      ap (! p) (ap p (ap (compose k p) B))
+   ≡⟨ ≣-cong (ap (! p)) (≣-sym (compose≡ {p = p} k 1 P.refl P.refl)) ⟩
+      ap (! p) (ap (compose (k + 1) p) B)
+   ≡⟨ ≣-cong (λ n → ap (! p) (ap (compose n p) B)) (+-comm k 1) ⟩
+      ap (! p) (ap (compose (1 + k) p) B)
+   ≡⟨ ≣-cong (ap (! p)) (compose≡ {p = p} 1 k P.refl P.refl) ⟩
+      ap (! p) (ap (compose k p) (ap p B))
+   ≡⟨ ≣-cong (ap (! p)) eq ⟩
+      ap (! p) A ∎
 
 -- need order of permutation
 postulate
@@ -127,13 +140,15 @@ PermComonad {τ} p with (ord p)
 PermComonad {τ} p | (n , eqn) =
             record { F = record { F₀ = ap (! p)
                    ; F₁ = λ {((k , eq) , (k⁻¹ , eq⁻¹))
-                          → (k , {!!})
-                          , ({!!} , {!!}) }}
-                   ; η = record { η = λ X → {!!}
-                                          , {!!}
+                          → (k   , coF₁≡ k eq)
+                          , (k⁻¹ , ≣-trans (ap∼ (composeAssoc k⁻¹))
+                                           (≣-cong (ap (! p)) eq⁻¹)) }}
+                   ; η = record { η = λ X → (1 , (ap∼ (rinv◎l {c = p})))
+                                          , (n , ≣-trans (ord≡ n eqn)
+                                                         (ap∼ (rinv◎l {c = p})))
                                 ; commute = λ _ → tt }
-                   ; μ = record { η = λ X → {!!}
-                                          , {!!}
+                   ; μ = record { η = λ X → (n , ≣-cong (λ q → ap q (ap (! p) X)) eqn)
+                                          , (1 , ≣-refl)
                                 ; commute = λ _ → tt }
                    ; assoc = tt
                    ; identityˡ = tt
