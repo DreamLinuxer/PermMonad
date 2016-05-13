@@ -19,8 +19,6 @@ open import Data.Product hiding (map)
 open import Data.Vec hiding (reverse)
 open import Data.Nat hiding (_⊔_)
 open import Data.Integer using (+_) 
-open import Rational+ renaming (_+_ to _ℚ+_; _*_ to _ℚ*_)
-  hiding (_≤_; _≤?_)
 open import Relation.Nullary
 import Relation.Binary.PropositionalEquality as P
 open P.≡-Reasoning
