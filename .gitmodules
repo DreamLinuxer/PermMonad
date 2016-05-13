@@ -1,0 +1,3 @@
+[submodule "categories"]
+	path = categories
+	url = git@github.com:vikraman/categories.git
