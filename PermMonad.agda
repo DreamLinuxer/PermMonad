@@ -139,10 +139,10 @@ PermComonad : {τ : U} (p : τ ⟷ τ) → Comonad (p!p⇒C p)
 PermComonad {τ} p with (ord p)
 PermComonad {τ} p | (n , eqn) =
             record { F = record { F₀ = ap (! p)
-                   ; F₁ = λ {((k , eq) , (k⁻¹ , eq⁻¹))
-                          → (k   , coF₁≡ k eq)
-                          , (k⁻¹ , ≣-trans (ap∼ (composeAssoc k⁻¹))
-                                           (≣-cong (ap (! p)) eq⁻¹)) }}
+                                ; F₁ = λ {((k , eq) , (k⁻¹ , eq⁻¹))
+                                       → (k   , coF₁≡ k eq)
+                                       , (k⁻¹ , ≣-trans (ap∼ (composeAssoc k⁻¹))
+                                                        (≣-cong (ap (! p)) eq⁻¹)) }}
                    ; η = record { η = λ X → (1 , (ap∼ (rinv◎l {c = p})))
                                           , (n , ≣-trans (ord≡ n eqn)
                                                          (ap∼ (rinv◎l {c = p})))
