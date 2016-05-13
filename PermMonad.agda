@@ -88,6 +88,15 @@ ord≡ {τ} {p} {X} n eqn =  ap (compose n (! p)) X
    → Σ[ k ∈ ℕ ] (ap (compose k (! p)) X ≣ ap p X)
 η⇒ {τ} {p} {X} (n  , eqn) = n , ord≡ n eqn
 
+μ⇒ : {τ : U} {p : τ ⟷ τ} {X : ⟦ τ ⟧} (n : ℕ)
+   → (compose n p) ≡ ! p
+   → (ap (compose n p) (ap p (ap p X)) ≡ ap p X)
+μ⇒ {τ} {p} {X} n eqn =  ap (compose n p) (ap p (ap p X))
+                     ≡⟨ P.cong (λ q → ap q (ap p (ap p X))) eqn ⟩
+                        ap (! p) (ap p (ap p X))
+                     ≡⟨ ap!≡ {p = p} ≣-refl ⟩
+                        ap p X ∎
+
 PermMonad : {τ : U} (p : τ ⟷ τ) → Monad (p!p⇒C p)
 PermMonad {τ} p with (ord p)
 PermMonad {τ} p | (n , eqn) =
@@ -99,11 +108,10 @@ PermMonad {τ} p | (n , eqn) =
                  ; η = record { η = λ X → (1 , ≣-refl)
                               , η⇒ (n , eqn)
                  ; commute = λ _ → tt }
-                 ; μ = record { η = λ X → (n , {!!})
+                 ; μ = record { η = λ X → (n , μ⇒ n eqn)
                                         , (1 , (ap!≡ {p = p} P.refl))
                               ; commute = λ _ → tt }
                  ; assoc = tt
                  ; identityˡ = tt
                  ; identityʳ = tt}
-
 
