@@ -25,11 +25,12 @@ open import Relation.Binary
   using (Rel; IsEquivalence; module IsEquivalence; Reflexive; Symmetric; Transitive)
   renaming (_⇒_ to _⊆_)
 
+open import Comonad
 open import PermPi
 
 F₁≡ : {τ : U} {p : τ ⟷ τ} {A B : Category.Obj (p!p⇒C p)} (k : ℕ)
     → ap (compose k (! p)) A ≣ B
-    → ap (compose k (! p)) (ap (compose 1 p) A) ≣ ap (compose 1 p) B
+    → ap (compose k (! p)) (ap p A) ≣ ap p B
 F₁≡ {τ} {p} {A} {B} ℕ.zero eq = ≣-cong (ap p) eq
 F₁≡ {τ} {p} {A} {B} (ℕ.suc k) eq =
        ap (compose k (! p)) (ap (! p) (ap p A))
@@ -45,6 +46,12 @@ F₁≡ {τ} {p} {A} {B} (ℕ.suc k) eq =
        ap p (ap (compose k (! p)) (ap (! p) A))
     ≡⟨ ≣-cong (ap p) eq ⟩
        ap p B ∎
+
+coF₁≡ : {τ : U} {p : τ ⟷ τ} {A B : Category.Obj (p!p⇒C p)} (k : ℕ)
+      → ap (compose k p) B ≣ A
+      → ap (compose k p) (ap (! p) B) ≣ ap (! p) A
+coF₁≡ {τ} {p} {A} {B} ℕ.zero eq    = ≣-cong (ap (! p)) eq
+coF₁≡ {τ} {p} {A} {B} (ℕ.suc k) eq = {!!}
 
 -- need order of permutation
 postulate
@@ -106,7 +113,7 @@ PermMonad {τ} p | (n , eqn) =
                                                       (≣-cong (λ x → ap p x) eq))
                                      , (k⁻¹ , F₁≡ k⁻¹ eq⁻¹)} }
                  ; η = record { η = λ X → (1 , ≣-refl)
-                              , η⇒ (n , eqn)
+                                        , η⇒ (n , eqn)
                  ; commute = λ _ → tt }
                  ; μ = record { η = λ X → (n , μ⇒ n eqn)
                                         , (1 , (ap!≡ {p = p} P.refl))
@@ -115,3 +122,19 @@ PermMonad {τ} p | (n , eqn) =
                  ; identityˡ = tt
                  ; identityʳ = tt}
 
+PermComonad : {τ : U} (p : τ ⟷ τ) → Comonad (p!p⇒C p)
+PermComonad {τ} p with (ord p)
+PermComonad {τ} p | (n , eqn) =
+            record { F = record { F₀ = ap (! p)
+                   ; F₁ = λ {((k , eq) , (k⁻¹ , eq⁻¹))
+                          → (k , {!!})
+                          , ({!!} , {!!}) }}
+                   ; η = record { η = λ X → {!!}
+                                          , {!!}
+                                ; commute = λ _ → tt }
+                   ; μ = record { η = λ X → {!!}
+                                          , {!!}
+                                ; commute = λ _ → tt }
+                   ; assoc = tt
+                   ; identityˡ = tt
+                   ; identityʳ = tt}
